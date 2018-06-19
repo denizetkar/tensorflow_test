@@ -75,13 +75,14 @@ def get_mnist_accuracy(test_dataset, train_output):
 
 if __name__ == '__main__':
     batch_size = 200
+    tf.reset_default_graph()
     with tf.name_scope('data'):
         train_data, test_data = get_mnist_dataset_v2(batch_size)
-    dec_tree_net = dt_network.DTNetwork(train_data, num_of_decisions=10,
+    dec_tree_net = dt_network.DTNetwork(train_data, num_of_decisions=1,
                                         inference_network=dt_network.CNNSoftmaxClassifier,
                                         decision_network_args={'hidden_layers': []},
                                         loss_func=dt_network.softmax_cross_entropy,
-                                        optimizer_func_args={'lr': 0.0001})
+                                        optimizer_func_args={'lr': 0.00005})
     # dec_tree_net = dt_network.DTNetwork(train_data, num_of_decisions=10,
     #                                     inference_network=dt_network.SoftmaxClassifier,
     #                                     inference_network_args={'hidden_layers': []},
@@ -98,7 +99,7 @@ if __name__ == '__main__':
     tf.reset_default_graph()
     gc.collect()
 
-    path = os.path.join('assignments', '01', 'data', 'mnist.npz')
+    path = os.path.join('..', 'data', 'mnist.npz')
     f = np.load(path)
     x_train, y_train = f['x_train'], f['y_train']
     x_test, y_test = f['x_test'], f['y_test']
@@ -128,14 +129,14 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.show()
 
-    pred_idx = []
-    threshold = 0.8
-    for i in range(pred.shape[0]):
-        if all(pred[i] <= threshold):
-            pred_idx.append(i)
-    pred_idx_num = 10
-    print(pred[pred_idx[pred_idx_num]])
-    testset_img_num = pred_idx[pred_idx_num]
-    plt.imshow(x_test[testset_img_num].reshape(28, 28), cmap='gray', interpolation='none')
-    plt.title(f'class {real_labels[testset_img_num]}, pred {pred_labels[testset_img_num]}')
-    plt.show()
+    # pred_idx = []
+    # threshold = 0.8
+    # for i in range(pred.shape[0]):
+    #     if all(pred[i] <= threshold):
+    #         pred_idx.append(i)
+    # pred_idx_num = 0
+    # print(pred[pred_idx[pred_idx_num]])
+    # testset_img_num = pred_idx[pred_idx_num]
+    # plt.imshow(x_test[testset_img_num].reshape(28, 28), cmap='gray', interpolation='none')
+    # plt.title(f'class {real_labels[testset_img_num]}, pred {pred_labels[testset_img_num]}')
+    # plt.show()

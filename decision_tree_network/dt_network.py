@@ -77,7 +77,7 @@ class SoftmaxClassifier(MLP):
 class CNNSoftmaxClassifier(object):
     def __init__(self, hidden_layers=None):
         if hidden_layers is None:
-            hidden_layers = [{'type': 'conv2d'}, {'type': 'relu'}, {'type': 'max2d'}, {'type': 'fc'}]
+            hidden_layers = [{'type': 'conv2d'}, {'type': 'selu'}, {'type': 'max2d'}, {'type': 'fc'}]
         for layer in hidden_layers:
             if not isinstance(layer.get('type', None), str):
                 layer['type'] = ''
@@ -103,6 +103,9 @@ class CNNSoftmaxClassifier(object):
                     net = tf.nn.relu(net, name=f'relu_{i}', **hidden_layer['args'])
                 except TypeError:
                     net = tf.nn.relu(net, name=f'relu_{i}')
+            elif hidden_layer['type'] == 'selu':
+                # tf.nn.selu does not accept any other argument.
+                net = tf.nn.selu(net, name=f'selu_{i}')
             elif hidden_layer['type'] == 'max2d':
                 try:
                     net = tf.layers.max_pooling2d(net, name=f'max2d_{i}', **hidden_layer['args'])
@@ -271,9 +274,9 @@ class DTNetwork(object):
     def train(self, epochs=10, verbose=True, save_intervals=None, retrain=False):
         safe_mkdir('checkpoints')
         with tf.Session() as sess:
-            writer = tf.summary.FileWriter('graphs', sess.graph)
+            writer = tf.summary.FileWriter('graphs')    # , sess.graph)
             sess.run(tf.global_variables_initializer())
-            saver = tf.train.Saver(tf.all_variables())
+            saver = tf.train.Saver(tf.global_variables())
             if not retrain:
                 ckpt = tf.train.get_checkpoint_state('checkpoints')
                 if ckpt and ckpt.model_checkpoint_path:
