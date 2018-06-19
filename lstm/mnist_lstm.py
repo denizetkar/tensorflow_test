@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.contrib import rnn
 import numpy as np
 
-f = np.load("data/mnist.npz")
+f = np.load("../data/mnist.npz")
 x_train, y_train = f['x_train'], f['y_train']
 x_test, y_test = f['x_test'], f['y_test']
 f.close()
