@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import dt_network
+try:
+    import dt_network
+except Exception:
+    from decision_tree_network import dt_network
 
 data_x = np.linspace(1, 10, 1000, dtype=np.float32).reshape((-1, 1))
 data_y = np.log(data_x)
