@@ -8,17 +8,14 @@ try:
     import dt_network
 except Exception:
     from decision_tree_network import dt_network
-try:
-    import utils
-except Exception:
-    from decision_tree_network import utils
     os.chdir(os.path.join('.', 'decision_tree_network'))
+import mnist_utils
 
 if __name__ == '__main__':
     batch_size = 200
     tf.reset_default_graph()
     with tf.name_scope('data'):
-        train_data, test_data = utils.get_mnist_dataset(batch_size)
+        train_data, test_data = mnist_utils.get_mnist_dataset(batch_size)
     dec_tree_net = dt_network.DTNetwork(train_data, num_of_decisions=1,
                                         inference_network=dt_network.CNNSoftmaxClassifier,
                                         decision_network_args={'hidden_layers': []},
@@ -33,7 +30,7 @@ if __name__ == '__main__':
     dec_tree_net.build()
     dec_tree_net.train(epochs=10, save_intervals=1)
     train_output, train_loss = dec_tree_net.eval(test_data)
-    train_acc = utils.get_mnist_accuracy(test_data, train_output)
+    train_acc = mnist_utils.get_mnist_accuracy(test_data, train_output)
     print(f'train loss: {train_loss}, train acc: {train_acc}')
 
     del dec_tree_net, train_data, test_data
@@ -51,8 +48,8 @@ if __name__ == '__main__':
     x_test = x_test.astype('float32')
     x_train /= 255
     x_test /= 255
-    y_train = utils.int_to_categorical(y_train, 10)
-    y_test = utils.int_to_categorical(y_test, 10)
+    y_train = mnist_utils.int_to_categorical(y_train, 10)
+    y_test = mnist_utils.int_to_categorical(y_test, 10)
 
     pred = np.concatenate(train_output, axis=0)
     pred_labels = np.argmax(pred, axis=1)

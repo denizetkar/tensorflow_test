@@ -200,12 +200,8 @@ class DTNetwork(object):
         self.optimizer_func = optimizer_func
         self.optimizer_func_args = optimizer_func_args
         self.target_dim = self.targets.shape[1].value
-        self.g_step = None
-        self.decision = None
-        self.output = None
-        self.loss = None
-        self.merged = None
-        self.training_step = None
+        self.g_step, self.decision, self.output = None, None, None
+        self.loss, self.merged, self.training_step = None, None, None
 
     def build(self):
         inference_net_list = []
@@ -246,7 +242,7 @@ class DTNetwork(object):
             except TypeError:
                 optimizer = self.optimizer_func()
 
-            self.training_step = optimizer.minimize(self.loss)
+            self.training_step = optimizer.minimize(self.loss, global_step=self.g_step)
 
     def eval(self, test_io_dataset):
         test_initializer = self.iterator.make_initializer(test_io_dataset)
@@ -271,7 +267,7 @@ class DTNetwork(object):
         # total_output = np.concatenate(total_output, axis=0)
         return total_output, total_loss/n_batch
 
-    def train(self, epochs=10, verbose=True, save_intervals=None, retrain=False):
+    def train(self, epochs=10, verbose=True, save_intervals=None, retrain=False, reset_g_step=False):
         safe_mkdir('checkpoints')
         with tf.Session() as sess:
             writer = tf.summary.FileWriter('graphs')    # , sess.graph)
@@ -281,9 +277,10 @@ class DTNetwork(object):
                 ckpt = tf.train.get_checkpoint_state('checkpoints')
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
+            if reset_g_step:
+                sess.run(self.g_step.assign(0))
 
-            increment_g_step = self.g_step.assign_add(1)
-            for epoch in range(epochs):
+            for epoch in range(self.g_step.eval(), epochs):
                 sess.run(self.initializer)
                 total_loss = 0
                 n_batch = 0
@@ -291,7 +288,6 @@ class DTNetwork(object):
                     while True:
                         summary, batch_loss, _ = sess.run([self.merged, self.loss, self.training_step])
                         writer.add_summary(summary, global_step=self.g_step.eval())
-                        sess.run(increment_g_step)
                         total_loss += batch_loss
                         n_batch += 1
                 except tf.errors.OutOfRangeError:
