@@ -1,12 +1,15 @@
 import os
+import sys
 import time
 import random
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-import mnist_utils
 if __name__ != '__main__':
     os.chdir(os.path.join('.', 'RNN'))
+else:
+    sys.path.append(os.path.abspath('..'))
+import mnist_utils
 
 
 def vocab_encode(text, vocab):
@@ -59,9 +62,9 @@ class CharRNN(object):
         self.seq = tf.placeholder(tf.int32, [None, None])
         self.temp = tf.constant(1.5)
         self.hidden_sizes = [128, 128]
-        self.batch_size = 64
+        self.batch_size = 128
         self.gstep = tf.Variable(0, dtype=tf.int32, trainable=False, name='global_step')
-        self.lr = 0.0003
+        self.lr = 0.0001
         self.skip_step = 100
         self.len_generated = 200
         self.in_state, self.output, self.out_state, self.logits = None, None, None, None
@@ -87,8 +90,8 @@ class CharRNN(object):
                                                           labels=seq[:, 1:])
         self.loss = tf.reduce_sum(loss)
         # sample the next character from Maxwell-Boltzmann Distribution with temperature temp.
-        # self.sample = tf.multinomial(tf.exp(self.logits[:, -1] / self.temp), 1)[:, 0]
-        self.sample = tf.argmax(self.logits[:, -1], 1)
+        self.sample = tf.multinomial(tf.exp(self.logits[:, -1] / self.temp), 1)[:, 0]
+        # self.sample = tf.argmax(self.logits[:, -1], 1)
         self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss, global_step=self.gstep)
 
     def train(self):

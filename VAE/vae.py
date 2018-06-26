@@ -4,9 +4,11 @@ import os
 import sys
 import matplotlib.pyplot as plt
 
-import mnist_utils
 if __name__ != '__main__':
     os.chdir(os.path.join('.', 'VAE'))
+else:
+    sys.path.append(os.path.abspath('..'))
+import mnist_utils
 
 
 def make_encoder(images, code_size=2):

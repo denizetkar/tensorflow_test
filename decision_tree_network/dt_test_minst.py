@@ -1,11 +1,13 @@
 import tensorflow as tf
 import numpy as np
 import os
+import sys
 import matplotlib.pyplot as plt
 import gc
 
 try:
     import dt_network
+    sys.path.append(os.path.abspath('..'))
 except Exception:
     from decision_tree_network import dt_network
     os.chdir(os.path.join('.', 'decision_tree_network'))
