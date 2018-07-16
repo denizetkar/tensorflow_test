@@ -68,3 +68,24 @@ with tf.Session() as sess:
     print(sess.run(loss, feed_dict={target:x, output:y}))
     print(sess.run(loss, feed_dict={target:x[0:1], output:y[0:1]})+sess.run(loss, feed_dict={target:x[1:2], output:y[1:2]}))
 sess.close()
+
+
+
+import tensorflow as tf
+import numpy as np
+
+x = tf.constant(np.array(range(24)).reshape((2, 3, 4)))
+x_max = tf.reduce_max(x, axis=0)
+with tf.Session() as sess:
+    print(sess.run(x_max))  # ==> "array([220,   4], dtype=int32)"
+
+t = [[4, 2], [3, 4, 5]]
+
+dataset = tf.data.Dataset.from_generator(lambda: t, tf.int32, output_shapes=[None])
+
+iterator = dataset.make_one_shot_iterator()
+next_element = iterator.get_next()
+
+with tf.Session() as sess:
+    print(sess.run(next_element))  # ==> '[4, 2]'
+    print(sess.run(next_element))  # ==> '[3, 4, 5]'

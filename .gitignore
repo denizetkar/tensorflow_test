@@ -2,4 +2,5 @@
 logs/
 checkpoints/
 graphs/
+processed/
 *.txt
