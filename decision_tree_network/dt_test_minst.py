@@ -22,7 +22,7 @@ if __name__ == '__main__':
                                         inference_network=dt_network.CNNSoftmaxClassifier,
                                         decision_network_args={'hidden_layers': []},
                                         loss_func=dt_network.softmax_cross_entropy,
-                                        optimizer_func_args={'lr': 0.00005})
+                                        optimizer_func_args={'learning_rate': 0.00005})
     # dec_tree_net = dt_network.DTNetwork(train_data, num_of_decisions=10,
     #                                     inference_network=dt_network.SoftmaxClassifier,
     #                                     inference_network_args={'hidden_layers': []},

@@ -290,4 +290,5 @@ class Seq2Seq:
         writer.close()
 
     def eval(self):
+        # TODO: complete eval method
         pass

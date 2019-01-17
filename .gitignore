@@ -4,3 +4,5 @@ checkpoints/
 graphs/
 processed/
 *.txt
+hparams.json
+__pycache__

@@ -26,7 +26,7 @@ if __name__ == '__main__':
                                        'kernel_initializer': tf.variance_scaling_initializer(),
                                        'bias_initializer': tf.variance_scaling_initializer()}
                                   ]},
-                                  optimizer_func_args={'lr': 1})
+                                  optimizer_func_args={'learning_rate': 1})
     dt_net.build()
     dt_net.train(epochs=1000, retrain=True)
 

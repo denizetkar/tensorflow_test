@@ -49,4 +49,5 @@ if __name__ == '__main__':
         model.build()
         model.train(epochs=5, save_intervals=1, reset_g_step=True)
     elif args.mode == 'chat':
+        # TODO: complete chat mode
         pass
